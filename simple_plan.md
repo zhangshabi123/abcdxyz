@@ -112,7 +112,7 @@ precision_matching/
                           #   openvocab_queries()/groundingdino_prompt() 两种 prompt 形式
   task_level.py           # 任务级 glue：detection_task_metrics（同一 lens 跑两边再配对）、
                           #   lm_task_metrics（token top-1）、embedding_cosine（encoder-only 用）
-  tests/run_all.py        # 零依赖测试器：python3 precision_matching/tests/run_all.py（53 个用例）
+  tests/run_all.py        # 零依赖测试器：python3 precision_matching/tests/run_all.py（51 个用例）
 ```
 
 集成四步：
