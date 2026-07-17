@@ -22,6 +22,14 @@
 **为什么检测必须用真实图片**：纯噪声图上检测器输出 0~2 个框（实测），两边都"啥也没检出"
 一比完全一致——但挑框、去重这段最难转换的逻辑根本没被用上，等于没测。
 
+**单 trial 模式（当前项目设置）**：整个评测只跑 1 个 trial 时，检测模型只会用到图目录里
+按文件名排序的**第一张**图。先在有 torch 的机器上跑
+`python3 -m precision_matching.check_images assets/real_images` 给 6 张图排名
+（Mask R-CNN 高置信检出数 + Keypoint R-CNN 检出人数），把最好的一张留在目录里（或确保它
+排序最前）。合格标准：≥10 个高置信框且 ≥2 个人——Keypoint R-CNN 只检人，没人的图对它等于
+白卷。其余模型单 trial 影响很小（一次前向已是数万~千万个数值的逐值比较），个别模型数字
+可疑时手动换 seed 重跑一次即可。
+
 **随机整数的三个配套注意点**（不改代码，只是配置/加载时要做对）：
 
 1. **flan_t5 / switch** 是 encoder-decoder，forward 还需要 `decoder_input_ids`——在 inputs
@@ -70,6 +78,8 @@ precision_matching/
                           #   兼容现有 spec 格式 [[shape], min, max, dtype, layout]（+可选第6项 kind）
   real_images.py          # fetch_coco_images(dir) 一次性下载（http），评测期离线；
                           #   load_image_for_trial(dir, trial_i, shape) 逐 trial 确定性轮换
+  check_images.py         # 单 trial 选图工具（需 torch，在 Mac 上跑一次）：给 6 张图按
+                          #   Mask R-CNN 检出数 + 人数排名，选出唯一 trial 用哪张
   dense_metrics.py        # 四指标参考实现（公式与文档逐字一致）+ aggregate_worst；
                           #   另附 ref_nonfinite/cand_nonfinite 两个 NaN/Inf 计数诊断列（跨张量求和，
                           #   不参与四指标聚合）；非有限元素在 mismatch_ratio 中计为不匹配
