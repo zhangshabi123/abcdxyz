@@ -102,8 +102,17 @@ precision_matching/
                           #   另附 ref_nonfinite/cand_nonfinite 两个 NaN/Inf 计数诊断列（跨张量求和，
                           #   不参与四指标聚合）；非有限元素在 mismatch_ratio 中计为不匹配
   detection_matching.py   # match_detections / iou_matrix / save_detections / load_detections
-  decision_agreement.py   # top1_agreement / binary_mask_iou —— 任务级指标的实现
-  tests/run_all.py        # 零依赖测试器：python3 precision_matching/tests/run_all.py（38 个用例）
+  decision_agreement.py   # top1_agreement / binary_mask_iou
+  postprocess.py          # 任务级后处理 lens（纯 numpy）：postprocess_query_detector（DETR 族：
+                          #   sigmoid + per-query max + cxcywh 归一化→xyxy 像素）、postprocess_yolo_head
+                          #   （ultralytics raw head，cls 已 sigmoid，逐类 NMS）、unpack_padded_detections
+                          #   （effdet [B,100,6]，class 列为 1 基 COCO id）、nms_numpy、stable_sigmoid
+  real_text.py            # REAL_TEXT 真实长文本 + token_ids_for(tokenizer, 1024)（精确铺长，
+                          #   在有模型库的机器上调用）+ COCO_CLASS_NAMES 80 类 +
+                          #   openvocab_queries()/groundingdino_prompt() 两种 prompt 形式
+  task_level.py           # 任务级 glue：detection_task_metrics（同一 lens 跑两边再配对）、
+                          #   lm_task_metrics（token top-1）、embedding_cosine（encoder-only 用）
+  tests/run_all.py        # 零依赖测试器：python3 precision_matching/tests/run_all.py（53 个用例）
 ```
 
 集成四步：

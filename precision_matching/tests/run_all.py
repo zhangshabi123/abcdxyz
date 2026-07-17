@@ -13,6 +13,8 @@ MODULES = [
     "precision_matching.tests.test_dense_metrics",
     "precision_matching.tests.test_detection_matching",
     "precision_matching.tests.test_decision_agreement",
+    "precision_matching.tests.test_postprocess",
+    "precision_matching.tests.test_real_text_and_task_level",
 ]
 
 
